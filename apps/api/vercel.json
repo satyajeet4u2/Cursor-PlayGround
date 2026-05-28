@@ -1,14 +1,16 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "apps/web/dist",
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/health",
-      "destination": "/api/health"
-    },
+      "src": "backend/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
     {
-      "source": "/((?!api/.*).*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "dist/index.js"
     }
   ]
 }
+  
