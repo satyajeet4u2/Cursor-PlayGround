@@ -1,0 +1,20 @@
+{
+    "version": 2,
+    "builds": [
+     {
+      "src": "./src/index.ts",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["dist/**", "src/**", "package.json", "package-lock.json"] }
+     }
+    ],
+    "routes": [
+     {
+      "src": "/(./src/* .* .ts *.js *.json)",
+      "dest": "./src/index.ts"
+     }
+    ],
+    "env": {
+      "MONGODB_URI": "@mongodb_uri",
+      "JWT_SECRET": "@jwt_secret"
+    }
+   }
