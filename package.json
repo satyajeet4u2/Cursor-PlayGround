@@ -2,8 +2,8 @@
   "name": "ops-cases-monorepo",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+     "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "postinstall": "npm run build -w @ops-cases/shared",
