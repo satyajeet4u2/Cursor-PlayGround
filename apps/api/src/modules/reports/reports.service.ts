@@ -20,9 +20,8 @@ export function parseDateRange(query: {
 
 export async function getMonthlyClosureRate(range: DateRange) {
   const rows = await Case.aggregate<{
-    _id: { year: number; month: number };
-    created: number;
-    closed: number;
+    created: { _id: { year: number; month: number }; count: number }[];
+    closed: { _id: { year: number; month: number }; count: number }[];
   }>([
     {
       $match: {
