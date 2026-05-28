@@ -12,6 +12,10 @@
     "lint": "npm run lint -w @ops-cases/api",
     "dev": "npm run dev -w @ops-cases/api",
     "dev:web": "npm run dev -w @ops-cases/web",
+    "dev:development": "npm run dev:development -w @ops-cases/api",
+    "dev:staging": "npm run dev:staging -w @ops-cases/api",
+    "dev:production": "npm run dev:production -w @ops-cases/api",
+    "start:prod": "npm run start:prod -w @ops-cases/api",
     "dev:all": "concurrently -n api,web -c blue,green \"npm run dev -w @ops-cases/api\" \"npm run dev -w @ops-cases/web\"",
     "seed": "npm run seed -w @ops-cases/api"
   },

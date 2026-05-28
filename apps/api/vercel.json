@@ -1,20 +1,50 @@
 {
-    "version": 2,
-    "builds": [
-     {
-      "src": "./src/index.ts",
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "env": {
+    "NODE_ENV": "production",
+    "MONGODB_URI": "@mongodb_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "CORS_ORIGINS": "@cors_origins"
+  },
+  "builds": [
+    {
+      "src": "dist/index.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**", "src/**", "package.json", "package-lock.json"] }
-     }
-    ],
-    "routes": [
-     {
-      "src": "/(./src/* .* .ts *.js *.json)",
-      "dest": "./src/index.ts"
-     }
-    ],
-    "env": {
-      "MONGODB_URI": "@mongodb_uri",
-      "JWT_SECRET": "@jwt_secret"
+      "config": {
+        "maxLambdaSize": "50mb",
+        "nodeVersion": "20.x",
+        "includeFiles": [
+          "dist/**",
+          "package.json",
+          "package-lock.json"
+        ]
+      }
     }
-   }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/api-docs(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/health",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.js"
+    }
+  ],
+  "functions": {
+    "dist/index.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  }
+}
