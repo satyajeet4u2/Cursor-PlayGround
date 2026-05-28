@@ -1,15 +1,16 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { connectDb, disconnectDb } from '../lib/db';
 
-let mongoServer: MongoMemoryServer;
+let replSet: MongoMemoryReplSet;
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
+  // Start an in-memory replica set so transactions are supported in tests
+  replSet = await MongoMemoryReplSet.create({ replSet: { count: 1, storageEngine: 'wiredTiger' } });
   process.env.JWT_SECRET = 'test-jwt-secret';
-  await connectDb(mongoServer.getUri());
+  await connectDb(replSet.getUri());
 });
 
 afterAll(async () => {
   await disconnectDb();
-  await mongoServer.stop();
+  if (replSet) await replSet.stop();
 });

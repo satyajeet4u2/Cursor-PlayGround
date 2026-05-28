@@ -153,44 +153,44 @@ async function seed() {
     .slice(0, 8);
 
   const auditRows: Array<Record<string, unknown>> = [];
-  for (const c of auditSamples) {
-    const actor = c.assigneeId ?? agents[0]._id;
-    const at = c.createdAt ?? now;
-    auditRows.push(
-      {
-        caseId: c._id,
-        action: 'assign',
-        fromStatus: CaseStatus.Draft,
-        toStatus: CaseStatus.Assigned,
-        actorId: manager._id,
-        at: daysFrom(at, 0),
-      },
-      {
-        caseId: c._id,
-        action: 'start_work',
-        fromStatus: CaseStatus.Assigned,
-        toStatus: CaseStatus.InProgress,
-        actorId: actor,
-        at: daysFrom(at, 1),
-      },
-      {
-        caseId: c._id,
-        action: 'submit_review',
-        fromStatus: CaseStatus.InProgress,
-        toStatus: CaseStatus.PendingReview,
-        actorId: actor,
-        at: daysFrom(at, 3),
-      },
-      {
-        caseId: c._id,
-        action: c.verdict === CaseVerdict.Discrepant ? 'close_discrepant' : 'close_cleared',
-        fromStatus: CaseStatus.PendingReview,
-        toStatus: CaseStatus.Closed,
-        actorId: manager._id,
-        at: c.closedAt ?? daysFrom(at, 5),
-      },
-    );
-  }
+  // for (const c of auditSamples) {
+  //   const actor = c.assigneeId ?? agents[0]._id;
+  //   const at = c.createdAt ?? now;
+  //   auditRows.push(
+  //     {
+  //       caseId: c._id,
+  //       action: 'assign',
+  //       fromStatus: CaseStatus.Draft,
+  //       toStatus: CaseStatus.Assigned,
+  //       actorId: manager._id,
+  //       at: daysFrom(at, 0),
+  //     },
+  //     {
+  //       caseId: c._id,
+  //       action: 'start_work',
+  //       fromStatus: CaseStatus.Assigned,
+  //       toStatus: CaseStatus.InProgress,
+  //       actorId: actor,
+  //       at: daysFrom(at, 1),
+  //     },
+  //     {
+  //       caseId: c._id,
+  //       action: 'submit_review',
+  //       fromStatus: CaseStatus.InProgress,
+  //       toStatus: CaseStatus.PendingReview,
+  //       actorId: actor,
+  //       at: daysFrom(at, 3),
+  //     },
+  //     {
+  //       caseId: c._id,
+  //       action: c.verdict === CaseVerdict.Discrepant ? 'close_discrepant' : 'close_cleared',
+  //       fromStatus: CaseStatus.PendingReview,
+  //       toStatus: CaseStatus.Closed,
+  //       actorId: manager._id,
+  //       at: c.closedAt ?? daysFrom(at, 5),
+  //     },
+  //   );
+  // }
 
   await AuditEvent.insertMany(auditRows);
 
