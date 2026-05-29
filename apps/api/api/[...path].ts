@@ -21,7 +21,68 @@ function getMongoUri(): string {
   if (!uri) {
     throw new Error('MONGODB_URI is required');
   }
+
+  if (process.env.NODE_ENV === 'production' && uri.includes('127.0.0.1')) {
+    throw new Error('MONGODB_URI cannot use localhost in production');
+  }
+
   return uri;
+}
+
+function describeStartupError(err: unknown): { statusCode: number; code: string; message: string } {
+  if (!(err instanceof Error)) {
+    return {
+      statusCode: 503,
+      code: 'DB_UNAVAILABLE',
+      message: 'Database connection failed',
+    };
+  }
+
+  if (err.message === 'MONGODB_URI is required') {
+    return {
+      statusCode: 500,
+      code: 'CONFIG_ERROR',
+      message: 'MONGODB_URI is not configured',
+    };
+  }
+
+  if (err.message === 'MONGODB_URI cannot use localhost in production') {
+    return {
+      statusCode: 500,
+      code: 'CONFIG_ERROR',
+      message: 'MONGODB_URI is pointing to localhost in production',
+    };
+  }
+
+  if (err.message.includes('bad auth') || err.message.includes('Authentication failed')) {
+    return {
+      statusCode: 503,
+      code: 'DB_AUTH_FAILED',
+      message: 'MongoDB authentication failed',
+    };
+  }
+
+  if (err.message.includes('querySrv') || err.message.includes('ENOTFOUND')) {
+    return {
+      statusCode: 503,
+      code: 'DB_DNS_FAILED',
+      message: 'MongoDB hostname could not be resolved',
+    };
+  }
+
+  if (err.message.includes('Server selection timed out')) {
+    return {
+      statusCode: 503,
+      code: 'DB_TIMEOUT',
+      message: 'MongoDB connection timed out',
+    };
+  }
+
+  return {
+    statusCode: 503,
+    code: 'DB_UNAVAILABLE',
+    message: 'Database connection failed',
+  };
 }
 
 async function connectOnce(): Promise<void> {
@@ -65,15 +126,13 @@ export default async function handler(
     await connectOnce();
     app(req, res);
   } catch (err) {
-    console.error(err);
+    const startupError = describeStartupError(err);
+    console.error('API startup failed:', startupError, err);
     dbConnection = undefined;
-    sendJson(res, 500, {
+    sendJson(res, startupError.statusCode, {
       error: {
-        code: 'INTERNAL_ERROR',
-        message:
-          err instanceof Error && err.message === 'MONGODB_URI is required'
-            ? 'MONGODB_URI is not configured'
-            : 'Serverless function failed to initialize',
+        code: startupError.code,
+        message: startupError.message,
       },
     });
   }
