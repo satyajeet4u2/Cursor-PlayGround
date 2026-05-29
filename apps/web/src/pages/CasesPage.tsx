@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { CaseAction, UserRole } from '@ops-cases/shared';
 import { useAuth } from '../auth/AuthContext';
 import * as api from '../api/client';
-import type { AuditEventRecord, CaseRecord } from '../api/types';
+import type { AuditEventRecord, CaseRecord, CreateCaseInput } from '../api/types';
 import { CaseList } from '../components/CaseList';
 import { CaseDetail } from '../components/CaseDetail';
+import { CreateCaseForm } from '../components/CreateCaseForm';
 
 export function CasesPage() {
   const { token, user } = useAuth();
@@ -15,6 +16,7 @@ export function CasesPage() {
   const [listLoading, setListLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [acting, setActing] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadCases = useCallback(async () => {
@@ -75,6 +77,24 @@ export function CasesPage() {
     }
   }
 
+  async function handleCreate(input: CreateCaseInput) {
+    if (!token) return;
+    setCreating(true);
+    setError(null);
+    try {
+      const created = await api.createCase(token, input);
+      await loadCases();
+      setSelectedId(created._id);
+      setSelectedCase(created);
+      setAudit([]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to create case');
+      throw e;
+    } finally {
+      setCreating(false);
+    }
+  }
+
   const role = (user?.role ?? UserRole.Agent) as UserRole;
 
   return (
@@ -96,6 +116,11 @@ export function CasesPage() {
         ) : (
           <CaseList cases={cases} selectedId={selectedId} onSelect={setSelectedId} />
         )}
+
+        <section className="create-case-section">
+          <h3>New case</h3>
+          <CreateCaseForm creating={creating} onCreate={handleCreate} />
+        </section>
       </aside>
 
       <CaseDetail

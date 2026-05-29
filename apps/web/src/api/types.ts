@@ -16,6 +16,30 @@ export interface CaseRecord {
   closedAt?: string;
   assigneeId?: string;
   updatedAt?: string;
+  documents?: CaseDocumentRecord[];
+}
+
+export interface CaseDocumentRecord {
+  filename: string;
+  contentType: string;
+  size: number;
+  data?: string;
+  uploadedAt?: string;
+}
+
+export interface CreateCaseDocument {
+  filename: string;
+  contentType: string;
+  size: number;
+  data: string;
+}
+
+export interface CreateCaseInput {
+  clientName: string;
+  clientCode: string;
+  caseType: string;
+  dueAt?: string;
+  documents: CreateCaseDocument[];
 }
 
 export interface AuditEventRecord {

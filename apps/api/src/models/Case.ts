@@ -12,6 +12,13 @@ export interface ICase extends Document {
   slaBreachedAt?: Date;
   verdict?: CaseVerdict;
   closedAt?: Date;
+  documents: Array<{
+    filename: string;
+    contentType: string;
+    size: number;
+    data: string;
+    uploadedAt: Date;
+  }>;
 }
 
 const caseSchema = new Schema<ICase>(
@@ -30,6 +37,18 @@ const caseSchema = new Schema<ICase>(
     slaBreachedAt: { type: Date },
     verdict: { type: String, enum: Object.values(CaseVerdict) },
     closedAt: { type: Date },
+    documents: {
+      type: [
+        {
+          filename: { type: String, required: true },
+          contentType: { type: String, required: true },
+          size: { type: Number, required: true },
+          data: { type: String, required: true },
+          uploadedAt: { type: Date, required: true, default: Date.now },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true },
 );

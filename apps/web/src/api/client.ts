@@ -2,6 +2,7 @@ import type {
   ApiErrorBody,
   AuditEventRecord,
   CaseRecord,
+  CreateCaseInput,
   ManagerDashboard,
   ReportRange,
   User,
@@ -57,6 +58,15 @@ export async function getMe(token: string) {
 export async function listCases(token: string) {
   const data = await request<{ cases: CaseRecord[] }>('/cases', { token });
   return data.cases;
+}
+
+export async function createCase(token: string, input: CreateCaseInput) {
+  const data = await request<{ case: CaseRecord }>('/cases', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(input),
+  });
+  return data.case;
 }
 
 export async function getCase(token: string, caseId: string) {

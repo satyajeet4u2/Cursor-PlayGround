@@ -164,7 +164,8 @@ label {
   margin: 0.75rem 0 0.35rem;
 }
 
-input {
+input,
+select {
   width: 100%;
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--border);
@@ -172,6 +173,10 @@ input {
   background: var(--bg);
   color: var(--text);
   font: inherit;
+}
+
+input[type='file'] {
+  padding: 0.45rem;
 }
 
 .muted {
@@ -220,6 +225,52 @@ input {
 .sidebar-head h2 {
   margin: 0;
   font-size: 1rem;
+}
+
+.create-case-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.create-case-section h3 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.create-case-form label {
+  margin-top: 0.65rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.1rem;
+}
+
+.upload-list,
+.document-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.upload-list li,
+.document-list li {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.82rem;
+  margin-bottom: 0.35rem;
+}
+
+.upload-list span,
+.document-list small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 0.1rem;
 }
 
 .case-list {
@@ -336,10 +387,15 @@ input {
 }
 
 .actions h3,
+.documents-section h3,
 .audit-section h3 {
   font-size: 0.9rem;
   margin: 0 0 0.65rem;
   color: var(--muted);
+}
+
+.documents-section {
+  margin-bottom: 1.25rem;
 }
 
 .action-buttons {
