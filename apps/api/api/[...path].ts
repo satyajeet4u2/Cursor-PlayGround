@@ -36,6 +36,15 @@ export default async function handler(
 ): Promise<void> {
   req.url = normalizedUrl(req.url);
 
+  if (req.url === '/') {
+    sendJson(res, 200, {
+      status: 'ok',
+      service: 'ops-cases-api',
+      health: '/health',
+    });
+    return;
+  }
+
   if (req.url === '/health') {
     app(req, res);
     return;
