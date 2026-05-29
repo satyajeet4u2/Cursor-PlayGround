@@ -8,6 +8,8 @@ export const openApiSpec = {
       'REST API for enterprise case management: auth, cases, status transitions, and audit trail.',
   },
   servers: [
+    { url: '/', description: 'Current deployment' },
+    { url: '/api', description: 'Current deployment with API prefix' },
     { url: 'http://localhost:4000', description: 'Local development' },
   ],
   tags: [

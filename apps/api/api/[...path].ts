@@ -122,6 +122,11 @@ export default async function handler(
     return;
   }
 
+  if (req.url === '/docs' || req.url.startsWith('/api-docs')) {
+    app(req, res);
+    return;
+  }
+
   try {
     await connectOnce();
     app(req, res);
