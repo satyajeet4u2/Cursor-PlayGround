@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createApp } from '../apps/api/src/app';
-import { connectDb } from '../apps/api/src/lib/db';
+import { createApp } from '../src/app';
+import { connectDb } from '../src/lib/db';
 
 const app = createApp();
 let dbConnection: Promise<void> | undefined;
