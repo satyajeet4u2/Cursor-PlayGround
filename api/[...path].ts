@@ -6,7 +6,17 @@ import { connectDb } from '../apps/api/src/lib/db';
 const app = createApp();
 let dbConnection: Promise<void> | undefined;
 
-function connectOnce(): Promise<void> {
+function sendJson(res: ServerResponse, statusCode: number, body: unknown): void {
+  res.statusCode = statusCode;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(body));
+}
+
+function normalizedUrl(url: string | undefined): string {
+  return url?.replace(/^\/api(?=\/|$)/, '') || '/';
+}
+
+async function connectOnce(): Promise<void> {
   if (!dbConnection) {
     const uri = process.env.MONGODB_URI;
 
@@ -24,11 +34,26 @@ export default async function handler(
   req: IncomingMessage,
   res: ServerResponse,
 ): Promise<void> {
-  await connectOnce();
+  req.url = normalizedUrl(req.url);
 
-  if (req.url?.startsWith('/api')) {
-    req.url = req.url.replace(/^\/api(?=\/|$)/, '') || '/';
+  if (req.url === '/health') {
+    app(req, res);
+    return;
   }
 
-  app(req, res);
+  try {
+    await connectOnce();
+    app(req, res);
+  } catch (err) {
+    console.error(err);
+    sendJson(res, 500, {
+      error: {
+        code: 'INTERNAL_ERROR',
+        message:
+          err instanceof Error && err.message === 'MONGODB_URI is required'
+            ? 'MONGODB_URI is not configured'
+            : 'Serverless function failed to initialize',
+      },
+    });
+  }
 }
