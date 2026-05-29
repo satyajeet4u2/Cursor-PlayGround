@@ -80,6 +80,22 @@ export function CaseDetail({
         )}
       </dl>
 
+      {caseRecord.documents && caseRecord.documents.length > 0 && (
+        <section className="documents-section">
+          <h3>Documents</h3>
+          <ul className="document-list">
+            {caseRecord.documents.map((doc) => (
+              <li key={`${doc.filename}-${doc.uploadedAt ?? doc.size}`}>
+                <span>{doc.filename}</span>
+                <small>
+                  {doc.contentType} - {Math.ceil(doc.size / 1024)} KB
+                </small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {actions.length > 0 && (
         <div className="actions">
           <h3>Workflow actions</h3>

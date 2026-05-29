@@ -16,15 +16,17 @@ function normalizedUrl(url: string | undefined): string {
   return url?.replace(/^\/api(?=\/|$)/, '') || '/';
 }
 
+function getMongoUri(): string {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is required');
+  }
+  return uri;
+}
+
 async function connectOnce(): Promise<void> {
   if (!dbConnection) {
-    const uri = process.env.MONGODB_URI;
-
-    if (!uri) {
-      throw new Error('MONGODB_URI is required');
-    }
-
-    dbConnection = connectDb(uri);
+    dbConnection = connectDb(getMongoUri());
   }
 
   return dbConnection;
@@ -55,6 +57,7 @@ export default async function handler(
     app(req, res);
   } catch (err) {
     console.error(err);
+    dbConnection = undefined;
     sendJson(res, 500, {
       error: {
         code: 'INTERNAL_ERROR',
