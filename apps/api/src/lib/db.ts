@@ -4,6 +4,10 @@ export function isDbConnected(): boolean {
   return mongoose.connection.readyState === 1;
 }
 
+export function getDbName(): string | undefined {
+  return mongoose.connection.db?.databaseName;
+}
+
 export async function connectDb(uri: string): Promise<void> {
   if (isDbConnected()) {
     return;

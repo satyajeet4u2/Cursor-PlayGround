@@ -1,17 +1,19 @@
 import 'dotenv/config';
 import { createApp } from './app';
-import { connectDb } from './lib/db';
+import { connectDb, getDbName } from './lib/db';
 
 const PORT = parseInt(process.env.PORT ?? '4000', 10);
 
 async function main() {
   const uri = process.env.MONGODB_URI;
-  console.log('Connecting to MongoDB...', uri);
   if (!uri) {
     throw new Error('MONGODB_URI is required');
   }
 
+  console.log('Connecting to MongoDB...');
   await connectDb(uri);
+  console.log(`MongoDB connected${getDbName() ? `: ${getDbName()}` : ''}`);
+
   const app = createApp();
 
   app.listen(PORT, () => {
@@ -21,6 +23,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error('Failed to start API server:', err);
   process.exit(1);
 });
