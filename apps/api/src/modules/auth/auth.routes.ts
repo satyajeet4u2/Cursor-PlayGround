@@ -13,7 +13,9 @@ const loginSchema = z.object({
 });
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
+  
   try {
+    console.log('Login request data:', req.host);
     const { email, password } = loginSchema.parse(req.body);
     const user = await User.findOne({ email: email.toLowerCase(), active: true });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
