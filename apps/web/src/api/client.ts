@@ -9,6 +9,8 @@ import type {
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
+console.log('API Base URL:', API_BASE);
+
 async function request<T>(
   path: string,
   options: RequestInit & { token?: string } = {},
