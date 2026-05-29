@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { createApp } from '../src/app';
-import { connectDb } from '../src/lib/db';
+import { connectDb, isDbConnected } from '../src/lib/db';
 
 const app = createApp();
 let dbConnection: Promise<void> | undefined;
@@ -25,8 +25,17 @@ function getMongoUri(): string {
 }
 
 async function connectOnce(): Promise<void> {
+  if (isDbConnected()) {
+    return;
+  }
+
   if (!dbConnection) {
-    dbConnection = connectDb(getMongoUri());
+    console.log('MongoDB is not connected. Connecting before handling request...');
+    dbConnection = connectDb(getMongoUri()).catch((err) => {
+      console.error('MongoDB connection failed:', err);
+      dbConnection = undefined;
+      throw err;
+    });
   }
 
   return dbConnection;
